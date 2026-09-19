@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f4f0">
+    <title>твой маленький мир</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<main class="scene" id="scene">
+
+    <!-- Маленькая надпись о визите -->
+    <div class="visit-label" id="visitLabel"></div>
+
+
+    <!-- ПЕРСОНАЖ -->
+
+    <div
+        class="character-container calm"
+        id="character"
+        tabindex="0"
+        aria-label="Продолжить"
+    >
+
+        <div class="character-glow"></div>
+
+        <img
+            src="images/character.png"
+            alt="Персонаж"
+            class="character-image"
+            id="characterImage"
+        >
+
+        <canvas
+            class="pixel-canvas"
+            id="pixelCanvas"
+        ></canvas>
+
+    </div>
+
+
+    <!-- ДИАЛОГ -->
+
+    <section class="dialogue" id="dialogue">
+
+        <div class="dialogue-header">
+
+            <span
+                class="character-name"
+                id="characterName"
+            >
+                он
+            </span>
+
+            <span
+                class="dialogue-number"
+                id="dialogueNumber"
+            >
+                01
+            </span>
+
+        </div>
+
+        <div
+            class="dialogue-text"
+            id="dialogueText"
+        ></div>
+
+        <div
+            class="continue-indicator"
+            id="continueIndicator"
+        >
+            <span></span>
+        </div>
+
+    </section>
+
+
+    <!-- ОБЪЯТИЯ / LONG PRESS -->
+
+    <div
+        class="hug-overlay"
+        id="hugOverlay"
+    >
+
+        <div
+            class="hug-text"
+            id="hugText"
+        ></div>
+
+    </div>
+
+
+    <!-- ЛЁГКИЕ ПАСХАЛКИ -->
+
+    <div
+        class="egg-toast"
+        id="eggToast"
+        aria-live="polite"
+    >
+
+        <span class="egg-mark">·</span>
+
+        <span id="eggText"></span>
+
+    </div>
+
+
+    <!-- =========================================
+         ИГРА «СОБЕРИ ФРАЗУ»
+    ========================================= -->
+
+    <section
+        class="phrase-screen"
+        id="phraseScreen"
+        aria-hidden="true"
+    >
+
+        <div class="phrase-card">
+
+            <div class="game-small">
+                маленькая игра
+            </div>
+
+            <h2>
+                Собери фразу
+            </h2>
+
+            <p class="game-hint">
+                Нажимай на слова в правильном порядке.
+            </p>
+
+            <div
+                class="phrase-progress"
+                id="phraseProgress"
+            >
+                01 / 06
+            </div>
+
+            <div
+                class="phrase-result"
+                id="phraseResult"
+            ></div>
+
+            <div
+                class="word-bank"
+                id="wordBank"
+            ></div>
+
+            <div
+                class="assembled"
+                id="assembled"
+            ></div>
+
+            <button
+                class="game-next"
+                id="phraseNext"
+                hidden
+            >
+                дальше
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         ФИНАЛЬНАЯ СЦЕНА — ЗВЁЗДНОЕ НЕБО
+    ========================================= -->
+
+    <section
+        class="stars-screen"
+        id="starsScreen"
+        aria-hidden="true"
+    >
+
+        <div
+            class="stars-layer"
+            id="starsLayer"
+        ></div>
+
+
+        <div class="stars-intro">
+
+            <span>
+                посмотри наверх
+            </span>
+
+            <strong>
+                Иногда достаточно просто побыть здесь.
+            </strong>
+
+            <small id="starsHint">
+                Нажми на несколько звёзд.
+            </small>
+
+        </div>
+
+
+        <div
+            class="stars-message"
+            id="starsMessage"
+        ></div>
+
+
+        <button
+            class="stars-finish"
+            id="starsFinish"
+        >
+            остаться ещё немного
+        </button>
+
+    </section>
+
+
+    <!-- =========================================
+         ФИНАЛ
+    ========================================= -->
+
+    <div
+        class="final-screen"
+        id="finalScreen"
+    >
+
+        <div class="final-content">
+
+            <div class="final-small">
+                это было только для тебя
+            </div>
+
+            <h1>
+                Если ты забыла...
+            </h1>
+
+            <p>
+                я всегда могу напомнить.
+            </p>
+
+            <div class="final-actions">
+
+                <button id="restartBtn">
+                    начать сначала
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         МУЗЫКА
+    ========================================= -->
+
+    <div
+        class="music-control"
+        id="musicControl"
+        title="Музыка"
+    >
+
+        <span class="music-dot"></span>
+
+        <span id="musicLabel">
+            музыка
+        </span>
+
+    </div>
+
+
+    <audio
+        id="music"
+        loop
+        preload="none"
+    >
+
+        <source
+            src="music/music.mp3"
+            type="audio/mpeg"
+        >
+
+    </audio>
+
+</main>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1458 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #f5f4f0;
+    --text: #171717;
+    --muted: rgba(23,23,23,.42);
+    --line: rgba(23,23,23,.10);
+    --card: rgba(255,255,255,.92);
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+    font: inherit;
+}
+
+
+/* =========================================
+   ОСНОВНАЯ СЦЕНА
+========================================= */
+
+.scene {
+    position: relative;
+
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+
+    overflow: hidden;
+
+    background:
+        #ffffff
+        url("images/background.jpg")
+        center / cover
+        no-repeat;
+}
+
+.scene:before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background: rgba(255,255,255,.0);
+
+    z-index: 0;
+
+    pointer-events: none;
+}
+
+
+/* =========================================
+   НОЧНАЯ СЦЕНА
+========================================= */
+
+.stars-screen {
+    color: #fff;
+}
+
+.stars-intro strong,
+.stars-message {
+    color: #fff;
+}
+
+.scene.night:before {
+    background: rgba(0,0,0,.20);
+}
+
+.scene.night .character-image {
+    filter:
+        brightness(.84)
+        contrast(1.04);
+}
+
+.scene.night .dialogue {
+    background: rgba(28,28,28,.90);
+    border-color: var(--line);
+}
+
+.scene.night .music-control {
+    border-color: var(--line);
+}
+
+
+/* =========================================
+   VISIT
+========================================= */
+
+.visit-label {
+    position: absolute;
+
+    top: 27px;
+    left: 32px;
+
+    font-size: 9px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+
+    color: var(--muted);
+
+    z-index: 20;
+}
+
+
+/* =========================================
+   ПЕРСОНАЖ
+========================================= */
+
+.character-container {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: min(410px, 48vw);
+
+    transform:
+        translate(-50%, -50%);
+
+    cursor: pointer;
+
+    z-index: 2;
+
+    outline: none;
+
+    user-select: none;
+
+    -webkit-tap-highlight-color: transparent;
+
+    animation:
+        float 4.5s ease-in-out infinite;
+}
+
+.character-image {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    z-index: 2;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+
+    transition:
+        transform .45s cubic-bezier(.2,.8,.2,1),
+        filter .45s ease;
+}
+
+.character-glow {
+    position: absolute;
+
+    left: 50%;
+    bottom: 1%;
+
+    width: 54%;
+    height: 6%;
+
+    transform:
+        translateX(-50%);
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.08);
+
+    filter: blur(12px);
+
+    z-index: 1;
+
+    transition:
+        transform .45s ease,
+        opacity .45s ease;
+}
+
+
+/* =========================================
+   ПИКСЕЛЬНОЕ ПОЯВЛЕНИЕ
+========================================= */
+
+.pixel-canvas {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 3;
+
+    pointer-events: none;
+
+    image-rendering: pixelated;
+
+    transition: opacity .5s ease;
+}
+
+.pixel-canvas.hidden,
+.character-container.loaded .pixel-canvas {
+    opacity: 0;
+}
+
+.character-container.loading .character-image {
+    opacity: 0;
+}
+
+
+/* =========================================
+   АНИМАЦИИ ПЕРСОНАЖА
+========================================= */
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform:
+            translate(-50%, -50%);
+    }
+
+    50% {
+        transform:
+            translate(
+                -50%,
+                calc(-50% - 7px)
+            );
+    }
+}
+
+.character-container:hover {
+    animation-play-state: paused;
+}
+
+.character-container:hover .character-image {
+    transform: scale(1.012);
+}
+
+.character-container.clicked .character-image {
+    transform: scale(.965);
+}
+
+.character-container.clicked .character-glow {
+    transform:
+        translateX(-50%)
+        scale(1.08);
+
+    opacity: .8;
+}
+
+
+/* Состояния */
+
+.character-container.thinking .character-image {
+    transform: rotate(-1.2deg);
+}
+
+.character-container.serious .character-image {
+    transform:
+        rotate(1.2deg)
+        scale(.995);
+
+    filter: contrast(1.03);
+}
+
+.character-container.happy .character-image {
+    transform:
+        translateY(-5px)
+        scale(1.01);
+}
+
+.character-container.sad .character-image {
+    filter:
+        brightness(.90)
+        saturate(.82);
+}
+
+.character-container.finished {
+    animation: none;
+
+    transform:
+        translate(-50%, -50%)
+        scale(.96);
+
+    opacity: .7;
+}
+
+
+/* =========================================
+   ДИАЛОГ
+========================================= */
+
+.dialogue {
+    position: absolute;
+
+    left: 50%;
+    bottom: 38px;
+
+    transform:
+        translateX(-50%);
+
+    width:
+        min(
+            760px,
+            calc(100vw - 64px)
+        );
+
+    min-height: 116px;
+
+    padding:
+        20px
+        27px
+        23px;
+
+    background: var(--card);
+
+    border:
+        1px solid
+        var(--line);
+
+    border-radius: 13px;
+
+    box-shadow:
+        0 15px 50px
+        rgba(0,0,0,.055);
+
+    backdrop-filter:
+        blur(16px);
+
+    z-index: 10;
+
+    opacity: 0;
+
+    animation:
+        dialogueAppear
+        .9s
+        cubic-bezier(.2,.8,.2,1)
+        forwards;
+
+    cursor: pointer;
+}
+
+@keyframes dialogueAppear {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translate(
+                -50%,
+                18px
+            );
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translate(
+                -50%,
+                0
+            );
+    }
+}
+
+.dialogue-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 9px;
+}
+
+.character-name {
+    font-size: 10px;
+
+    letter-spacing: .12em;
+
+    text-transform: uppercase;
+}
+
+.dialogue-number {
+    font-size: 9px;
+
+    color: var(--muted);
+
+    letter-spacing: .15em;
+}
+
+.dialogue-text {
+    font-size: 18px;
+
+    line-height: 1.55;
+
+    min-height: 56px;
+
+    transition:
+        opacity .12s ease;
+}
+
+.dialogue-text.changing {
+    opacity: 0;
+}
+
+
+/* Продолжение */
+
+.continue-indicator {
+    height: 8px;
+
+    margin-top: 5px;
+
+    display: flex;
+
+    justify-content: center;
+
+    opacity: 0;
+
+    transition:
+        opacity .25s;
+}
+
+.continue-indicator.visible {
+    opacity: .55;
+}
+
+.continue-indicator span {
+    width: 5px;
+    height: 5px;
+
+    border-right:
+        1px solid
+        currentColor;
+
+    border-bottom:
+        1px solid
+        currentColor;
+
+    transform:
+        rotate(45deg);
+
+    animation:
+        arrow 1.2s
+        ease-in-out
+        infinite;
+}
+
+@keyframes arrow {
+
+    50% {
+        transform:
+            translateY(3px)
+            rotate(45deg);
+    }
+}
+
+
+/* =========================================
+   МУЗЫКА
+========================================= */
+
+.music-control {
+    position: absolute;
+
+    top: 25px;
+    right: 31px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        7px
+        11px;
+
+    border:
+        1px solid
+        var(--line);
+
+    border-radius: 20px;
+
+    color: var(--muted);
+
+    font-size: 9px;
+
+    letter-spacing: .15em;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    z-index: 30;
+
+    user-select: none;
+}
+
+.music-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background:
+        currentColor;
+
+    opacity: .45;
+}
+
+.music-control.playing .music-dot {
+    animation:
+        musicPulse
+        .9s
+        ease-in-out
+        infinite;
+}
+
+@keyframes musicPulse {
+
+    0%,
+    100% {
+        transform: scale(.6);
+        opacity: .35;
+    }
+
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* =========================================
+   ОБЪЯТИЯ
+========================================= */
+
+.hug-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(245,244,240,.72);
+
+    backdrop-filter:
+        blur(3px);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    z-index: 40;
+
+    transition:
+        opacity .45s ease;
+}
+
+.hug-overlay.visible {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+.hug-text {
+    font-size: 15px;
+
+    letter-spacing: .04em;
+
+    opacity: 0;
+
+    transform:
+        translateY(10px);
+
+    transition:
+        opacity .5s ease .1s,
+        transform .5s ease .1s;
+}
+
+.hug-overlay.visible .hug-text {
+    opacity: 1;
+
+    transform:
+        translateY(0);
+}
+
+.scene.night .hug-overlay {
+    background:
+        rgba(21,21,21,.72);
+}
+
+
+/* =========================================
+   ПАСХАЛКИ
+========================================= */
+
+.egg-toast {
+    position: absolute;
+
+    left: 50%;
+    top: 28px;
+
+    transform:
+        translate(
+            -50%,
+            -12px
+        );
+
+    max-width:
+        min(
+            430px,
+            calc(100vw - 40px)
+        );
+
+    padding:
+        10px
+        15px;
+
+    border:
+        1px solid
+        var(--line);
+
+    border-radius: 22px;
+
+    background:
+        var(--card);
+
+    backdrop-filter:
+        blur(12px);
+
+    font-size: 12px;
+
+    letter-spacing: .03em;
+
+    text-align: center;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    z-index: 100;
+
+    transition:
+        opacity .4s ease,
+        transform .4s ease;
+}
+
+.egg-toast.visible {
+    opacity: 1;
+
+    transform:
+        translate(
+            -50%,
+            0
+        );
+}
+
+.egg-mark {
+    margin-right: 7px;
+
+    color: var(--muted);
+}
+
+
+/* =========================================
+   СОБЕРИ ФРАЗУ
+========================================= */
+
+.phrase-screen,
+.stars-screen {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 60;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity .8s ease;
+}
+
+.phrase-screen.visible,
+.stars-screen.visible {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+
+/* Окно игры */
+
+.phrase-screen {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 22px;
+
+    background:
+        rgba(245,244,240,.88);
+
+    backdrop-filter:
+        blur(14px);
+}
+
+.phrase-card {
+    width:
+        min(
+            650px,
+            calc(100vw - 28px)
+        );
+
+    padding: 30px;
+
+    border:
+        1px solid
+        var(--line);
+
+    border-radius: 16px;
+
+    background:
+        var(--card);
+
+    box-shadow:
+        0 20px 70px
+        rgba(0,0,0,.08);
+
+    text-align: center;
+}
+
+.game-small {
+    font-size: 9px;
+
+    letter-spacing: .2em;
+
+    text-transform: uppercase;
+
+    color: var(--muted);
+
+    margin-bottom: 11px;
+}
+
+.phrase-card h2 {
+    font-size: 32px;
+
+    font-weight: 400;
+
+    margin-bottom: 7px;
+}
+
+.game-hint {
+    font-size: 13px;
+
+    color: var(--muted);
+
+    margin-bottom: 13px;
+}
+
+.phrase-progress {
+    font-size: 9px;
+
+    letter-spacing: .16em;
+
+    color: var(--muted);
+
+    margin-bottom: 20px;
+}
+
+
+/* Слова */
+
+.word-bank,
+.assembled {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 46px;
+}
+
+.word {
+    border:
+        1px solid
+        var(--line);
+
+    background: transparent;
+
+    color: inherit;
+
+    border-radius: 20px;
+
+    padding:
+        9px
+        13px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition:
+        transform .18s,
+        background .18s;
+}
+
+.word:hover {
+    transform:
+        translateY(-2px);
+}
+
+.word.used {
+    opacity: .25;
+
+    pointer-events: none;
+}
+
+
+/* Собранная фраза */
+
+.assembled {
+    margin-top: 20px;
+
+    padding:
+        13px
+        10px;
+
+    border-top:
+        1px solid
+        var(--line);
+
+    font-size: 16px;
+
+    line-height: 1.5;
+}
+
+.assembled span {
+    animation:
+        wordIn
+        .25s
+        ease
+        both;
+}
+
+@keyframes wordIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: none;
+    }
+}
+
+
+/* Сообщение игры */
+
+.phrase-result {
+    min-height: 21px;
+
+    font-size: 12px;
+
+    color: var(--muted);
+
+    margin:
+        5px 0;
+}
+
+.phrase-result.good {
+    color: inherit;
+}
+
+.phrase-result.bad {
+    opacity: .75;
+}
+
+
+/* Кнопка */
+
+.game-next,
+.stars-finish {
+    margin-top: 15px;
+
+    padding:
+        10px
+        17px;
+
+    border:
+        1px solid
+        var(--line);
+
+    border-radius: 20px;
+
+    background: transparent;
+
+    color: inherit;
+
+    font-size: 9px;
+
+    letter-spacing: .14em;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+}
+
+
+/* =========================================
+   ЗВЁЗДНОЕ НЕБО
+========================================= */
+
+.stars-screen {
+    background:
+        radial-gradient(
+            ellipse at 50% 35%,
+            #292929 0%,
+            #171717 42%,
+            #0b0b0b 75%,
+            #050505 100%
+        );
+
+    color: #ffffff;
+    overflow: hidden;
+}
+
+
+/* Звёзды */
+
+.stars-layer {
+    position: absolute;
+
+    inset: 0;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.65);
+  box-shadow: 0 0 3px rgba(255,255,255,.3);
+  opacity: .45;
+  cursor: default;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+/* Звёзды, которые нужно нажать */
+.star.clickable {
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  box-shadow:
+    0 0 5px rgba(255,255,255,.95),
+    0 0 12px rgba(255,255,255,.7),
+    0 0 24px rgba(255,255,255,.3);
+  opacity: .9;
+  cursor: pointer;
+  animation: clickableTwinkle 2.8s ease-in-out infinite;
+}
+
+/* Небольшая область вокруг звезды тоже реагирует на клик */
+.star.clickable::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+}
+
+@keyframes clickableTwinkle {
+  0%, 100% {
+    opacity: .7;
+    transform: scale(.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+ity .3s ease;
+}
+
+.star.big {
+    width: 3px;
+    height: 3px;
+
+    background: rgba(255, 255, 255, .9);
+
+    box-shadow:
+        0 0 4px rgba(255,255,255,.55),
+        0 0 9px rgba(255,255,255,.18);
+
+    opacity: .75;
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: .25;
+        transform: scale(.85);
+    }
+
+    50% {
+        opacity: .65;
+        transform: scale(1);
+    }
+}
+
+@keyframes twinkle {
+
+    50% {
+        opacity: .25;
+
+        transform:
+            scale(.75);
+    }
+}
+
+
+/* Текст наверху */
+
+.stars-intro {
+    position: absolute;
+
+    left: 50%;
+    top: 11%;
+
+    transform:
+        translateX(-50%);
+
+    width:
+        min(
+            650px,
+            90vw
+        );
+
+    text-align: center;
+
+    pointer-events: none;
+}
+
+.stars-intro span {
+    color: rgba(255,255,255,.5);
+}
+
+.stars-intro strong {
+    display: block;
+
+    font-size:
+        clamp(
+            20px,
+            3vw,
+            31px
+        );
+
+    font-weight: 400;
+
+    line-height: 1.35;
+}
+
+.stars-intro small {
+    color: rgba(255,255,255,.4);
+}
+
+
+/* Фразы от звёзд */
+
+.stars-message {
+    position: absolute;
+
+    left: 50%;
+    bottom: 18%;
+
+    transform:
+        translate(
+            -50%,
+            8px
+        );
+
+    width:
+        min(
+            520px,
+            86vw
+        );
+
+    text-align: center;
+
+    font-size: 15px;
+
+    line-height: 1.6;
+
+    opacity: 0;
+
+    transition:
+        opacity .45s,
+        transform .45s;
+}
+
+.stars-message.visible {
+    opacity: 1;
+
+    transform:
+        translate(
+            -50%,
+            0
+        );
+}
+
+/* =========================================
+   ИНТЕРАКТИВНЫЕ ЗВЁЗДЫ
+========================================= */
+
+.star.clickable {
+    width: 24px;
+    height: 24px;
+
+    font-size: 18px;
+    line-height: 24px;
+
+    color: #fff;
+
+    z-index: 5;
+
+    cursor: pointer;
+
+    /*
+        Увеличенная область нажатия.
+    */
+    padding: 0;
+
+    /*
+        Мягкое свечение.
+    */
+    filter:
+        drop-shadow(0 0 4px rgba(255,255,255,.9))
+        drop-shadow(0 0 10px rgba(255,255,255,.45));
+
+    transition:
+        transform .2s ease,
+        filter .2s ease;
+}
+
+
+.star.clickable:hover {
+    transform: scale(1.35);
+
+    filter:
+        drop-shadow(0 0 6px rgba(255,255,255,1))
+        drop-shadow(0 0 16px rgba(255,255,255,.7));
+}
+
+
+@keyframes starClickablePulse {
+
+    0% {
+        transform: scale(.9);
+        opacity: .75;
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(.9);
+        opacity: .75;
+    }
+
+}
+
+
+/* Кнопка выхода */
+
+.stars-finish {
+    position: absolute;
+
+    left: 50%;
+    bottom: 7%;
+
+    transform:
+        translateX(-50%);
+
+    color: #f4f2ec;
+
+    border-color:
+        rgba(244,242,236,.18);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity .5s;
+}
+
+.stars-finish.visible {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+
+/* =========================================
+   ФИНАЛ
+========================================= */
+
+.final-screen {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 25px;
+
+    background: var(--bg);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    z-index: 70;
+
+    transition:
+        opacity 1.2s ease;
+}
+
+.final-screen.visible {
+    opacity: 1;
+
+    pointer-events: auto;
+}
+
+.final-content {
+    max-width: 650px;
+
+    text-align: center;
+
+    transform:
+        translateY(12px);
+
+    transition:
+        transform 1.2s ease;
+}
+
+.final-screen.visible .final-content {
+    transform:
+        translateY(0);
+}
+
+.final-small {
+    margin-bottom: 14px;
+
+    font-size: 9px;
+
+    letter-spacing: .2em;
+
+    text-transform: uppercase;
+
+    color: var(--muted);
+}
+
+.final-content h1 {
+    margin-bottom: 15px;
+
+    font-size:
+        clamp(
+            30px,
+            5vw,
+            55px
+        );
+
+    font-weight: 400;
+
+    letter-spacing: -.03em;
+}
+
+.final-content p {
+    margin-bottom: 28px;
+
+    font-size:
+        clamp(
+            16px,
+            2vw,
+            20px
+        );
+
+    line-height: 1.5;
+
+    color: var(--muted);
+}
+
+.final-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    flex-wrap: wrap;
+}
+
+.final-actions button {
+    padding:
+        10px
+        16px;
+
+    border:
+        1px solid
+        var(--line);
+
+    border-radius: 20px;
+
+    background: transparent;
+
+    color: inherit;
+
+    font-size: 9px;
+
+    letter-spacing: .14em;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .visit-label {
+        top: 20px;
+        left: 20px;
+    }
+
+    .music-control {
+        top: 17px;
+        right: 18px;
+    }
+
+    .character-container {
+        width:
+            min(
+                330px,
+                77vw
+            );
+
+        top: 38%;
+    }
+
+    .dialogue {
+        width:
+            calc(100vw - 26px);
+
+        bottom: 16px;
+
+        min-height: 108px;
+
+        padding:
+            17px
+            18px
+            20px;
+
+        border-radius: 11px;
+    }
+
+    .dialogue-text {
+        font-size: 16px;
+
+        line-height: 1.5;
+    }
+
+    .character-name {
+        font-size: 9px;
+    }
+
+    .phrase-card {
+        padding:
+            25px
+            18px;
+    }
+
+    .phrase-card h2 {
+        font-size: 27px;
+    }
+
+    .stars-intro {
+        top: 14%;
+    }
+
+    .stars-message {
+        bottom: 19%;
+    }
+}
+
+
+@media (max-height: 650px) {
+
+    .character-container {
+        top: 35%;
+
+        width:
+            min(
+                290px,
+                48vw
+            );
+    }
+
+    .dialogue {
+        bottom: 10px;
+    }
+
+    .stars-intro {
+        top: 8%;
+    }
+}
